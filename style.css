@@ -1,0 +1,111 @@
+.map-title {
+    text-align: left;    
+    margin-bottom: 10px; 
+    margin-left: 10px;  /* Space between the title and the map */
+    font-size: 24px;    
+    font-weight: bold;    
+}
+
+
+.map-title .title {
+    margin-right: 1100px;    /* space between title and name, to put the name at the opposite side of the page */
+}
+
+.map-title .name {
+    font-size: 19px;      
+    font-weight: normal;   
+}
+
+.map-container {
+    position: absolute;
+    top: 50px; /* leaving space for the title */
+    bottom: 0;
+    width: 100%;
+}
+
+/*organizing legend's position, colour, size + styling legend elements*/
+
+.legend {
+    position: absolute;
+    background-color: #ffffff ;
+    top: 22%;     
+    right: 30px;  
+    margin: 0 10px 30px 0;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+    max-width: 200px;
+}
+
+
+.legend div {
+    margin-bottom: 5px;
+}
+
+.legend span {
+    display: inline-block;
+    border-radius: 50%;
+    height: 10px;
+    width: 10px;
+    margin-right: 5px;
+}
+
+.legend .plane {
+    display: inline-block;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+/* Plane Colors for the legend*/
+.legend div:nth-child(2) .plane { color: #1616ed; }
+.legend div:nth-child(3) .plane { color: #74cbd1; }
+.legend div:nth-child(4) .plane { color: #fdae61; }
+.legend div:nth-child(5) .plane { color: #d73027; }
+
+/*styling the continent filter*/
+.map-data-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    width: 260px;
+    top: 0;
+    left: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    overflow: visible;
+}
+
+.option-label {
+    font: 15px;
+    font-weight: bold;
+    width: 95%;
+    padding-bottom: 10px;
+}
+
+form {
+    padding-bottom: 20px;
+}
+
+/*styling the search bar and the return button*/
+
+.geocoder {
+    position: relative;
+    margin: 10px 0;
+}
+
+#returnbutton {
+    position: relative;
+    margin: 10px 0 10px;
+    width: 100%;
+}
+
+.map-search-container {
+    position: absolute; 
+    top: 40px;          
+    right: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    width: 260px;
+    margin: 10px 0 0 10px;
+    padding: 10px;
+    overflow: visible;
+}
