@@ -1,57 +1,319 @@
-/* Map Title Styling */
-.map-title {
-    text-align: left;    
-    margin-bottom: 10px; 
-    margin-left: 10px;
-    font-size: 24px;    
-    font-weight: bold;    
-}
-
-.map-title .title {
-    margin-right: 1100px;
-}
-
-.map-title .name {
-    font-size: 19px;      
-    font-weight: normal;   
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
 }
 
 /* Map Container */
-.map-container {
+#map {
     position: absolute;
-    top: 50px;
+    top: 0;
     bottom: 0;
+    left: 0;
+    right: 0;
+    transition: margin-right 0.3s ease;
+}
+
+/* Map Title */
+.map-title {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.map-title .name {
+    font-weight: normal;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+/* Side Panel */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.side-panel.active {
+    right: 0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    z-index: 1001;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+/* Panel Content */
+#panel-content {
+    position: relative;
+}
+
+#panel-content h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 22px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#panel-content p {
+    margin: 10px 0;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+#panel-content strong {
+    color: #444;
+}
+
+/* Video Container */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    margin: 20px 0;
+    background: #000;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Analysis Section */
+.analysis-section {
+    margin-top: 25px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 5px;
+    border-left: 4px solid #e41a1c;
+}
+
+.analysis-section h4 {
+    margin-top: 0;
+    color: #333;
+}
+
+
+/* Map Controls */
+.mapboxgl-ctrl-top-right {
+    top: 60px !important;
+}
+
+.mapboxgl-ctrl-bottom-left {
+    bottom: 30px !important;
+    left: 10px !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .side-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .side-panel.active {
+        right: 0;
+    }
+    
+    #map {
+        margin-right: 0 !important;
+    }
+}
+
+.map-data-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    width: 300px;
+    top: 50px;
+    left: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    overflow: visible;
+}
+
+.option-label {
+    font: 15px;
+    font-weight: bold;
+    width: 95%;
+    padding-bottom: 10px;
+}
+
+form {
+    padding-bottom: 5px;
+}
+
+/* Welcome Popup Styles */
+.welcome-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.welcome-popup.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-content {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.popup-content h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.popup-content ul {
+    padding-left: 20px;
+}
+
+.popup-content li {
+    margin-bottom: 8px;
+}
+
+#got-it-btn {
+    margin-top: 15px;
+    padding: 8px 20px;
+    background-color: #7b3294;
+}
+
+/* Make sure this is above the welcome popup */
+.side-panel {
+    z-index: 1001;
+}
+
+/* Suggestion Box Styles */
+.suggestion-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.suggestion-toggle {
+    background: #7b3294;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.suggestion-toggle span {
+    font-size: 1.2em;
+}
+
+.suggestion-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    width: 300px;
+    margin-top: 10px;
+    display: none;
+}
+
+.suggestion-box.expanded .suggestion-form {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background: #008837;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
     width: 100%;
 }
 
-/* Legend Styling */
-.legend {
-    position: absolute;
-    background-color: #ffffff;
-    top: 22%;     
-    right: 30px;  
-    margin: 0 10px 30px 0;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
-    max-width: 200px;
+.submit-btn:hover {
+    background: #3d9c3a;
 }
 
-/* Interactive Elements */
-.mapboxgl-popup {
-    max-width: 250px;
-}
-
-.mapboxgl-popup-content {
-    padding: 15px;
-    border-radius: 5px;
-}
-
-/* Hover Effects */
-.mapboxgl-canvas {
-    cursor: default;
-}
-
-.mapboxgl-canvas:hover {
-    cursor: pointer;
+/* Success Message */
+#form-success {
+    display: none;
+    color: #4daf4a;
+    margin-top: 10px;
+    font-weight: bold;
 }

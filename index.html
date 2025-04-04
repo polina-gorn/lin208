@@ -1,38 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breaking Bad Locations</title>
-    
+    <title>Breaking Bad and Language</title>
+
     <!-- Mapbox GL JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.css" rel="stylesheet" />
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
     <!-- Map Title -->
     <div class="map-title">
-        <span class="title">Breaking Bad Locations</span>
+        <span class="title">Exploring Language Stereotyping in Breaking Bad</span>
         <span class="name">by Polina Gorn</span>
     </div>
-    
-    <!-- Map Container -->
-    <div id="my-web-map" class="map-container"></div>
-    
-    <!-- Legend -->
-    <div id="popn-legend" class="legend">
-        <h4>Locations</h4>
-        <div><span style="color: #e41a1c">●</span> Key Locations</div>
-    </div>
 
+    <!-- Map Container -->
+    <div id="map" style="width: 100%; height: 100vh;"></div>
+
+    <!-- Legend -->
+    <!-- Add this legend div to your HTML -->
+    <!-- <div class="legend">
+        <h4>Stereotype Representation</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #4daf4a;"></div>
+            <span>Subverting</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #e41a1c;"></div>
+            <span>Reinforcing</span>
+        </div> -->
+    </div>
+    <div class="map-data-container">
+        <form>
+            <fieldset id="boundaryfieldset">
+                <a>Select a theme you want to explore</a>
+                <select id="boundary" name="boundary">
+                    <option value="" disabled selected>Select a Theme</option>
+                    <option value="Reinforcing">Reinforcing</option>
+                    <option value="Subverting">Subverting</option>
+                    <option value="All">Show All</option>
+                </select>
+            </fieldset>
+        </form>
+    </div>
     <!-- JavaScript Files -->
     <script src="script.js"></script>
+    <!-- Add this right before closing </body> tag -->
+    <div id="side-panel" class="side-panel">
+        <button id="close-panel" class="close-btn">×</button>
+        <div id="panel-content"></div>
+    </div>
+
+    <!-- Welcome Popup -->
+<div id="welcome-popup" class="welcome-popup">
+    <div class="popup-content">
+        <button id="close-welcome" class="close-btn">×</button>
+        <!-- <h3>Breaking Bad Locations Map</h3> -->
+        <a href="default.asp"><img src="https://raw.githubusercontent.com/polina-gorn/lin208/refs/heads/main/Linguistic%20Stereotyping%20-in%20Media.png" alt="Intro Image" style="width:100%;height:100%;"></a>
+       <p></p>
+        <p>This map shows locations of Breaking Bad scenes where characters' language use either reinforced or subverted stereotypes.</p>
+        <p> Even in such a carefully written show as Breaking Bad, language is still used to stereotype characters, though there are cases where authors subvert the stereotypes.</p>
+        <p><strong>Features:</strong></p>
+        <ul>
+            <li>Use the filter to explore the scenes where language was used to reinforce or subvert stereotypes</li>
+            <li>Click on the location to learn more</li>
+        </ul>
+        <p>Have fun exploring!</p>
+        <button id="got-it-btn" class="btn btn-primary">Got it!</button>
+    </div>
+</div>
+
+<!-- Suggestion Box -->
+<div id="suggestion-box" class="suggestion-box">
+    <button id="suggestion-toggle" class="suggestion-toggle">
+        <span></span> Have an idea?
+    </button>
+    <div class="suggestion-form">
+        <h4>Suggest another case of linguistic stereotyping or subversion of stereotypes in Breaking Bad</h4>
+        <form id="suggestion-form">
+            <div class="form-group">
+                <label for="suggestion-email">Your Email (optional):</label>
+                <input type="email" id="suggestion-email" placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+                <label for="suggestion-location">Location:</label>
+                <input type="text" id="suggestion-location" required placeholder="e.g., Los Pollos Hermanos">
+            </div>
+            <div class="form-group">
+                <label for="suggestion-moment"> Event Description:</label>
+                <textarea id="suggestion-moment" required placeholder="Describe the scene and how it reinforces or subverts stereotypes through language use"></textarea>
+            </div>
+            <!-- <div class="form-group">
+                <label for="suggestion-topic">Does it reinforce or subvert stereotypes?</label>
+                <select id="suggestion-topic" required>
+                    <option value="">Select...</option>
+                    <option value="Reinforcing">Reinforcing</option>
+                    <option value="Subverting">Subverting</option>
+                </select>
+            </div> -->
+            <button type="submit" class="submit-btn">Send Suggestion</button>
+        </form>
+    </div>
+</div>
+
 </body>
+
 </html>

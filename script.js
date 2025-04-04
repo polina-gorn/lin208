@@ -1,73 +1,308 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoicG9saW5hLWdvcm4iLCJhIjoiY201eTZhdDJyMGc1ODJrcTU0ZmVqZDhmeSJ9.b3lqv0gV68Aikf5HHMdIoQ';
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Map
+    mapboxgl.accessToken = 'pk.eyJ1IjoicG9saW5hLWdvcm4iLCJhIjoiY201eTZhdDJyMGc1ODJrcTU0ZmVqZDhmeSJ9.b3lqv0gV68Aikf5HHMdIoQ';
+    
+    // View configurations
+    const newMexicoView = {
+        center: [-106.6504, 34.5], // Centered on New Mexico
+        zoom: 6.5,
+        pitch: 0,
+        bearing: 0
+    };
 
-const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/light-v11',
-    center: [-106.6504, 35.0844], // Albuquerque
-    zoom: 11
+    const albuquerqueView = {
+        center: [-106.6504, 35.0844], // Centered on Albuquerque
+        zoom: 10,
+        pitch: 0,
+        bearing: 0
+    };
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/satellite-v9',
+        center: newMexicoView.center,
+        zoom: newMexicoView.zoom
+    });
+
+    // Store original view state
+    const originalView = {
+        center: albuquerqueView.center,
+        zoom: albuquerqueView.zoom,
+        pitch: 0,
+        bearing: 0
+    };
+    let currentFeatureView = null;
+
+    // Add controls
+    map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+    map.addControl(new mapboxgl.ScaleControl({ unit: 'metric' }));
+
+    const welcomePopup = document.getElementById('welcome-popup');
+    const closeWelcomeBtn = document.getElementById('close-welcome');
+    const gotItBtn = document.getElementById('got-it-btn');
+
+    // Show welcome popup on first visit
+   // if (!localStorage.getItem('mapWelcomeSeen')) {
+   if (true) {
+        setTimeout(() => {
+            welcomePopup.classList.add('active');
+        }, 1000); // Show after 1 second delay
+    }
+
+    // Close welcome popup
+    function closeWelcome() {
+        welcomePopup.classList.remove('active');
+        localStorage.setItem('mapWelcomeSeen', 'true');
+    }
+
+    closeWelcomeBtn.addEventListener('click', closeWelcome);
+    gotItBtn.addEventListener('click', closeWelcome);
+
+    // Add this inside your DOMContentLoaded event listener
+
+// Suggestion Box Functionality
+const suggestionBox = document.getElementById('suggestion-box');
+const suggestionToggle = document.getElementById('suggestion-toggle');
+const suggestionForm = document.getElementById('suggestion-form');
+const formSuccess = document.createElement('div');
+formSuccess.id = 'form-success';
+formSuccess.textContent = 'Thanks! Your suggestion has been submitted.';
+suggestionForm.appendChild(formSuccess);
+
+// Toggle form visibility
+suggestionToggle.addEventListener('click', () => {
+    suggestionBox.classList.toggle('expanded');
 });
 
-// Add controls
-map.addControl(new mapboxgl.NavigationControl());
-map.addControl(new mapboxgl.ScaleControl());
+// Form submission handler
+suggestionForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        email: document.getElementById('suggestion-email').value,
+        location: document.getElementById('suggestion-location').value,
+        moment: document.getElementById('suggestion-moment').value,
+        topic: document.getElementById('suggestion-topic').value,
+        timestamp: new Date().toISOString()
+    };
 
-map.on('load', () => {
-    // Add GeoJSON source with direct URL
-    map.addSource('breaking-bad', {
-        type: 'geojson',
-        data: 'https://raw.githubusercontent.com/polina-gorn/lin208/main/Breaking_Bad.geojson'
-    });
+    try {
+        // Using FormSubmit.co service (free)
+        const response = await fetch('https://formsubmit.co/ajax/YOUR_EMAIL@gmail.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
 
-    // Add circle layer
-    map.addLayer({
-        id: 'locations',
-        type: 'circle',
-        source: 'breaking-bad',
-        paint: {
-            'circle-radius': 8,
-            'circle-color': '#e41a1c',
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff'
+        const result = await response.json();
+        if (result.success) {
+            formSuccess.style.display = 'block';
+            suggestionForm.reset();
+            setTimeout(() => {
+                formSuccess.style.display = 'none';
+                suggestionBox.classList.remove('expanded');
+            }, 3000);
         }
-    });
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('Failed to submit suggestion. Please try again later.');
+    }
+});
 
-    // Add labels
-    map.addLayer({
-        id: 'location-labels',
-        type: 'symbol',
-        source: 'breaking-bad',
-        layout: {
-            'text-field': ['get', 'name'],
-            'text-size': 12,
-            'text-offset': [0, 1]
-        },
-        paint: {
-            'text-color': '#000000',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 1
+    // Get DOM elements
+    const sidePanel = document.getElementById('side-panel');
+    const panelContent = document.getElementById('panel-content');
+    const closePanelBtn = document.getElementById('close-panel');
+    const mapContainer = document.getElementById('map');
+
+    // Close panel and return to original view
+    function closePanel() {
+        sidePanel.classList.remove('active');
+        mapContainer.style.marginRight = '0';
+        
+        // Smoothly return to original view
+        map.flyTo({
+            center: originalView.center,
+            zoom: originalView.zoom,
+            bearing: originalView.bearing,
+            pitch: originalView.pitch,
+            speed: 1.2,
+            curve: 1,
+            essential: true
+        });
+    }
+
+    // Close panel function
+    closePanelBtn.addEventListener('click', closePanel);
+
+    // Function to extract YouTube ID
+    const getYouTubeId = (url) => {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    };
+
+    map.on('load', async () => {
+        try {
+            const response = await fetch('https://raw.githubusercontent.com/polina-gorn/lin208/main/Breaking_Bad.geojson');
+            if (!response.ok) throw new Error('Failed to fetch GeoJSON');
+            const data = await response.json();
+
+            map.addSource('breaking-bad', {
+                type: 'geojson',
+                data: data
+            });
+
+            // Add circle layer for locations
+            map.addLayer({
+                id: 'locations',
+                type: 'circle',
+                source: 'breaking-bad',
+                paint: {
+                    'circle-radius': 8,
+                    'circle-color': [
+                        'match',
+                        ['get', 'Topic'],
+                        'Subverting', '#008837',
+                        'Reinforcing', '#7b3294',
+                        '#777'
+                    ],
+                    'circle-stroke-width': 2,
+                    'circle-stroke-color': '#ffffff',
+                    'circle-opacity': 1
+                }
+            });
+
+            // Add labels
+            map.addLayer({
+                id: 'location-labels',
+                type: 'symbol',
+                source: 'breaking-bad',
+                layout: {
+                    'text-field': ['get', 'Location'],
+                    'text-size': 14,
+                    'text-offset': [1, 1],
+                    'text-allow-overlap': false
+                },
+                paint: {
+                    'text-color': '#000000',
+                    'text-halo-color': '#ffffff',
+                    'text-halo-width': 2
+                }
+            });
+
+            // Set initial filters to show all locations
+            map.setFilter('locations', ['has', 'Topic']);
+            map.setFilter('location-labels', ['has', 'Topic']);
+
+            // Click handler for locations
+            map.on('click', 'locations', (e) => {
+                const props = e.features[0].properties;
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                
+                // Store current feature view
+                currentFeatureView = {
+                    center: coordinates,
+                    zoom: 16
+                };
+                
+                // Move map to the left and zoom in
+                mapContainer.style.marginRight = '400px';
+                map.flyTo({
+                    center: coordinates,
+                    zoom: 16,
+                    speed: 1.2,
+                    curve: 1,
+                    essential: true
+                });
+
+                // Create panel content
+                let videoEmbed = '';
+                if (props.Video) {
+                    const videoUrls = props.Video.split(';').map(url => url.trim());
+                    videoEmbed = videoUrls.map(url => {
+                        const videoId = getYouTubeId(url);
+                        return videoId ? `
+                            <div class="video-container">
+                                <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                        frameborder="0" 
+                                        allowfullscreen></iframe>
+                            </div>
+                        ` : `<p><a href="${url}" target="_blank">View Video</a></p>`;
+                    }).join('');
+                }
+                
+                panelContent.innerHTML = `
+                    <h3>${props.Location}</h3>
+                    <p><strong>Moment:</strong> ${props.Moment}</p>
+                    ${videoEmbed}
+                    <div class="analysis-section">
+                        <h4>Analysis</h4>
+                        <p>${props.Analysis}</p>
+                    </div>
+                `;
+                
+                sidePanel.classList.add('active');
+            });
+
+            // Return to original view when clicking map background
+            map.on('click', (e) => {
+                if (!sidePanel.classList.contains('active')) return;
+                
+                const features = map.queryRenderedFeatures(e.point, {
+                    layers: ['locations']
+                });
+                
+                if (features.length === 0) {
+                    closePanel();
+                }
+            });
+
+            // Hover effects
+            map.on('mouseenter', 'locations', () => {
+                map.getCanvas().style.cursor = 'pointer';
+                map.setPaintProperty('locations', 'circle-radius', 10);
+            });
+
+            map.on('mouseleave', 'locations', () => {
+                map.getCanvas().style.cursor = '';
+                map.setPaintProperty('locations', 'circle-radius', 8);
+            });
+
+            // Filter and zoom handler
+            document.getElementById("boundaryfieldset").addEventListener('change', (e) => {
+                const selectedValue = document.getElementById('boundary').value;
+                
+                // Apply filters and adjust view
+                if (selectedValue === 'All') {
+                    map.setFilter('locations', ['has', 'Topic']);
+                    map.setFilter('location-labels', ['has', 'Topic']);
+                    map.flyTo(newMexicoView);
+                    originalView.center = newMexicoView.center;
+                    originalView.zoom = newMexicoView.zoom;
+                } 
+                else if (selectedValue === 'Subverting') {
+                    map.setFilter('locations', ['==', ['get', 'Topic'], 'Subverting']);
+                    map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Subverting']);
+                    map.flyTo(newMexicoView);
+                    originalView.center = newMexicoView.center;
+                    originalView.zoom = newMexicoView.zoom;
+                }
+                else if (selectedValue === 'Reinforcing') {
+                    map.setFilter('locations', ['==', ['get', 'Topic'], 'Reinforcing']);
+                    map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Reinforcing']);
+                    map.flyTo(albuquerqueView);
+                    originalView.center = albuquerqueView.center;
+                    originalView.zoom = albuquerqueView.zoom;
+                }
+            });
+
+        } catch (error) {
+            console.error('Error loading map data:', error);
+            alert('Failed to load map data. Please check console for details.');
         }
-    });
-
-    // Popup on click
-    map.on('click', 'locations', (e) => {
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(`
-                <h6>${e.features[0].properties.name}</h6>
-                <p>${e.features[0].properties.description}</p>
-                ${e.features[0].properties.season ? `<small>Season: ${e.features[0].properties.season}</small>` : ''}
-            `)
-            .addTo(map);
-    });
-
-    // Hover effects
-    map.on('mouseenter', 'locations', () => {
-        map.getCanvas().style.cursor = 'pointer';
-        map.setPaintProperty('locations', 'circle-radius', 10);
-    });
-
-    map.on('mouseleave', 'locations', () => {
-        map.getCanvas().style.cursor = '';
-        map.setPaintProperty('locations', 'circle-radius', 8);
     });
 });
