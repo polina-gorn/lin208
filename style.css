@@ -40,8 +40,8 @@ body {
 .side-panel {
     position: fixed;
     top: 0;
-    right: -400px;
-    width: 400px;
+    right: -500px;
+    width: 500px;
     height: 100vh;
     background: white;
     box-shadow: -2px 0 15px rgba(0,0,0,0.1);
