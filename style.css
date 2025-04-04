@@ -317,3 +317,73 @@ form {
     margin-top: 10px;
     font-weight: bold;
 }
+
+/* Audio Player Styles */
+.audio-player-container {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.audio-btn {
+    background: #e41a1c;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.audio-btn:hover {
+    background: #c01012;
+    transform: scale(1.05);
+}
+
+.audio-btn.playing {
+    background: #4daf4a;
+}
+
+.progress-container {
+    flex-grow: 1;
+    position: relative;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: #e41a1c;
+    transition: width 0.1s linear;
+}
+
+.time {
+    position: absolute;
+    right: 0;
+    top: -20px;
+    font-size: 11px;
+    color: #666;
+}
+
+#feature-audio {
+    display: none;
+}

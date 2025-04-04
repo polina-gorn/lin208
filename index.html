@@ -60,6 +60,22 @@
     <div id="side-panel" class="side-panel">
         <button id="close-panel" class="close-btn">×</button>
         <div id="panel-content"></div>
+        <div class="audio-player-container">
+            <h4>Audio Analysis</h4>
+            <div class="audio-controls">
+                <button id="play-btn" class="audio-btn">
+                    <i class="play-icon">▶</i>
+                </button>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                    <span class="time">0:00</span>
+                </div>
+                <button id="mute-btn" class="audio-btn">
+                    <i class="volume-icon">🔊</i>
+                </button>
+            </div>
+            <audio id="feature-audio"></audio>
+        </div>
     </div>
 
     <!-- Welcome Popup -->

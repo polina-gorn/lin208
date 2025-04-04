@@ -145,6 +145,80 @@ suggestionForm.addEventListener('submit', async (e) => {
         return (match && match[2].length === 11) ? match[2] : null;
     };
 
+    // Audio elements
+const audioPlayer = document.getElementById('feature-audio');
+const playBtn = document.getElementById('play-btn');
+const muteBtn = document.getElementById('mute-btn');
+const progressBar = document.querySelector('.progress-bar');
+const timeDisplay = document.querySelector('.time');
+
+// Format time (seconds to MM:SS)
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// Update progress bar
+function updateProgress() {
+    const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    progressBar.style.setProperty('--progress', `${percent}%`);
+    timeDisplay.textContent = formatTime(audioPlayer.currentTime);
+}
+
+// Play/pause toggle
+playBtn.addEventListener('click', () => {
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        playBtn.classList.add('playing');
+        playBtn.innerHTML = '<i class="play-icon">❚❚</i>';
+    } else {
+        audioPlayer.pause();
+        playBtn.classList.remove('playing');
+        playBtn.innerHTML = '<i class="play-icon">▶</i>';
+    }
+});
+
+// Mute toggle
+muteBtn.addEventListener('click', () => {
+    audioPlayer.muted = !audioPlayer.muted;
+    muteBtn.innerHTML = audioPlayer.muted ? 
+        '<i class="volume-icon">🔇</i>' : 
+        '<i class="volume-icon">🔊</i>';
+});
+
+// Update progress as audio plays
+audioPlayer.addEventListener('timeupdate', updateProgress);
+
+// Reset when audio ends
+audioPlayer.addEventListener('ended', () => {
+    playBtn.classList.remove('playing');
+    playBtn.innerHTML = '<i class="play-icon">▶</i>';
+    progressBar.style.setProperty('--progress', '0%');
+    timeDisplay.textContent = '0:00';
+});
+
+// In your feature click handler:
+map.on('click', 'locations', (e) => {
+    const props = e.features[0].properties;
+    
+    // ... existing code to show panel ...
+    
+    // Set audio source if available
+    if (props.voice) {
+        audioPlayer.src = props.voice;
+        document.querySelector('.audio-player-container h4').textContent = 
+            props.audioTitle || 'Audio Analysis';
+        
+        // Load metadata to get duration
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            timeDisplay.textContent = formatTime(audioPlayer.duration);
+        });
+    } else {
+        document.querySelector('.audio-player-container').style.display = 'none';
+    }
+});
+
     map.on('load', async () => {
         try {
             const response = await fetch('https://raw.githubusercontent.com/polina-gorn/lin208/main/Breaking_Bad.geojson');
