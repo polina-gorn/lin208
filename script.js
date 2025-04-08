@@ -380,52 +380,95 @@ function findFeatureByLocation(locationName) {
     return features.find(f => f.properties.Location === locationName);
 }
 
-// Handle clicks on geo-links in the side panel
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('geo-link')) {
-        e.preventDefault();
-        const targetLocation = e.target.getAttribute('data-feature-id');
-        const targetFeature = findFeatureByLocation(targetLocation);
-
-        if (targetFeature) {
-            // Pan to the target feature
-            map.flyTo({
-                center: targetFeature.geometry.coordinates,
-                zoom: 16,
-                speed: 1.2,
-                essential: true
+// Add this right after your GeoJSON is loaded in map.on('load')
+function setupGeoLinks() {
+    // Use event delegation for dynamically created links
+    document.body.addEventListener('click', function(e) {
+        if (e.target.classList.contains('geo-link')) {
+            e.preventDefault();
+            const targetLocation = e.target.getAttribute('data-feature-id');
+            
+            // Find the feature in your GeoJSON source
+            const features = map.querySourceFeatures('breaking-bad', {
+                filter: ['==', ['get', 'Location'], targetLocation]
             });
+            
+            if (features.length > 0) {
+                const targetFeature = features[0];
+                
+                // Fly to the location
+                map.flyTo({
+                    center: targetFeature.geometry.coordinates,
+                    zoom: 16,
+                    speed: 1.2,
+                    essential: true
+                });
 
-            // Update the side panel (reuse your existing panel logic)
-            const props = targetFeature.properties;
-            let videoEmbed = '';
-            if (props.Video) {
-                const videoId = getYouTubeId(props.Video);
-                videoEmbed = videoId ? `
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                frameborder="0" 
-                                allowfullscreen></iframe>
-                    </div>
-                ` : `<p><a href="${props.Video}" target="_blank">View Video</a></p>`;
+                // Update the side panel
+                updateSidePanel(targetFeature);
             }
-
-            panelContent.innerHTML = `
-                <h3>${props.Location}</h3>
-                <p><strong>Moment:</strong> ${props.Moment}</p>
-                ${videoEmbed}
-                <div class="analysis-section">
-                    <h4>Analysis</h4>
-                    <p>${props.Analysis}</p>
-                </div>
-            `;
-
-            // Ensure the panel stays open
-            sidePanel.classList.add('active');
-            mapContainer.style.marginRight = '400px';
         }
+    });
+}
+
+// Reusable function to update side panel
+function updateSidePanel(feature) {
+    const props = feature.properties;
+    const coordinates = feature.geometry.coordinates.slice();
+    
+    // Store current feature view
+    currentFeatureView = {
+        center: coordinates,
+        zoom: 16
+    };
+
+    // Move map to the left and zoom in
+    document.getElementById('map').style.marginRight = '400px';
+    
+    // Create panel content
+    let videoEmbed = '';
+    if (props.Video) {
+        const videoUrls = props.Video.split(';').map(url => url.trim());
+        videoEmbed = videoUrls.map(url => {
+            const videoId = getYouTubeId(url);
+            return videoId ? `
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/${videoId}" 
+                            frameborder="0" 
+                            allowfullscreen></iframe>
+                </div>
+            ` : `<p><a href="${url}" target="_blank">View Video</a></p>`;
+        }).join('');
     }
-});
+
+    document.getElementById('panel-content').innerHTML = `
+        <h3>${props.Location}</h3>
+        <p><strong>Moment:</strong> ${props.Moment}</p>
+        ${videoEmbed}
+        <div class="analysis-section">
+            <h4>Analysis</h4>
+            <p>${props.Analysis}</p>
+        </div>
+    `;
+
+    document.getElementById('side-panel').classList.add('active');
+    
+    // Handle audio if available
+    const audioPlayer = document.getElementById('feature-audio');
+    if (props.Audio) {
+        audioPlayer.src = props.Audio;
+        document.querySelector('.audio-player-container').style.display = 'block';
+        document.querySelector('.audio-player-container h4').textContent = 'Audio Analysis';
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            document.querySelector('.time').textContent = formatTime(audioPlayer.duration);
+        });
+    } else {
+        document.querySelector('.audio-player-container').style.display = 'none';
+    }
+}
+
+// Then call this after your GeoJSON is loaded
+setupGeoLinks();
 
         } catch (error) {
             console.error('Error loading map data:', error);
