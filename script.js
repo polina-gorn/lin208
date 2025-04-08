@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize Map
     mapboxgl.accessToken = 'pk.eyJ1IjoicG9saW5hLWdvcm4iLCJhIjoiY201eTZhdDJyMGc1ODJrcTU0ZmVqZDhmeSJ9.b3lqv0gV68Aikf5HHMdIoQ';
-    
+
     // View configurations
     const newMexicoView = {
         center: [-106.6504, 34.5], // Centered on New Mexico
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/satellite-v9',
+        style: 'mapbox://styles/polina-gorn/cm98x01fw002y01s889steatu',
         center: newMexicoView.center,
         zoom: newMexicoView.zoom
     });
@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const gotItBtn = document.getElementById('got-it-btn');
 
     // Show welcome popup on first visit
-   // if (!localStorage.getItem('mapWelcomeSeen')) {
-   if (true) {
+    // if (!localStorage.getItem('mapWelcomeSeen')) {
+    if (true) {
         setTimeout(() => {
             welcomePopup.classList.add('active');
         }, 1000); // Show after 1 second delay
@@ -60,57 +60,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add this inside your DOMContentLoaded event listener
 
-// Suggestion Box Functionality
-const suggestionBox = document.getElementById('suggestion-box');
-const suggestionToggle = document.getElementById('suggestion-toggle');
-const suggestionForm = document.getElementById('suggestion-form');
-const formSuccess = document.createElement('div');
-formSuccess.id = 'form-success';
-formSuccess.textContent = 'Thanks! Your suggestion has been submitted.';
-suggestionForm.appendChild(formSuccess);
+    // Suggestion Box Functionality
+    const suggestionBox = document.getElementById('suggestion-box');
+    const suggestionToggle = document.getElementById('suggestion-toggle');
+    const suggestionForm = document.getElementById('suggestion-form');
+    const formSuccess = document.createElement('div');
+    formSuccess.id = 'form-success';
+    formSuccess.textContent = 'Thanks! Your suggestion has been submitted.';
+    suggestionForm.appendChild(formSuccess);
 
-// Toggle form visibility
-suggestionToggle.addEventListener('click', () => {
-    suggestionBox.classList.toggle('expanded');
-});
+    // Toggle form visibility
+    suggestionToggle.addEventListener('click', () => {
+        suggestionBox.classList.toggle('expanded');
+    });
 
-// Form submission handler
-suggestionForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = {
-        email: document.getElementById('suggestion-email').value,
-        location: document.getElementById('suggestion-location').value,
-        moment: document.getElementById('suggestion-moment').value,
-        topic: document.getElementById('suggestion-topic').value,
-        timestamp: new Date().toISOString()
-    };
+    // Form submission handler
+    suggestionForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    try {
-        // Using FormSubmit.co service (free)
-        const response = await fetch('https://formsubmit.co/ajax/YOUR_EMAIL@gmail.com', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
+        const formData = {
+            email: document.getElementById('suggestion-email').value,
+            location: document.getElementById('suggestion-location').value,
+            moment: document.getElementById('suggestion-moment').value,
+            topic: document.getElementById('suggestion-topic').value,
+            timestamp: new Date().toISOString()
+        };
 
-        const result = await response.json();
-        if (result.success) {
-            formSuccess.style.display = 'block';
-            suggestionForm.reset();
-            setTimeout(() => {
-                formSuccess.style.display = 'none';
-                suggestionBox.classList.remove('expanded');
-            }, 3000);
+        try {
+            // Using FormSubmit.co service (free)
+            const response = await fetch('https://formsubmit.co/ajax/YOUR_EMAIL@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                formSuccess.style.display = 'block';
+                suggestionForm.reset();
+                setTimeout(() => {
+                    formSuccess.style.display = 'none';
+                    suggestionBox.classList.remove('expanded');
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('Failed to submit suggestion. Please try again later.');
         }
-    } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('Failed to submit suggestion. Please try again later.');
-    }
-});
+    });
 
     // Get DOM elements
     const sidePanel = document.getElementById('side-panel');
@@ -122,7 +122,7 @@ suggestionForm.addEventListener('submit', async (e) => {
     function closePanel() {
         sidePanel.classList.remove('active');
         mapContainer.style.marginRight = '0';
-        
+
         // Smoothly return to original view
         map.flyTo({
             center: originalView.center,
@@ -146,78 +146,78 @@ suggestionForm.addEventListener('submit', async (e) => {
     };
 
     // Audio elements
-const audioPlayer = document.getElementById('feature-audio');
-const playBtn = document.getElementById('play-btn');
-const muteBtn = document.getElementById('mute-btn');
-const progressBar = document.querySelector('.progress-bar');
-const timeDisplay = document.querySelector('.time');
+    const audioPlayer = document.getElementById('feature-audio');
+    const playBtn = document.getElementById('play-btn');
+    const muteBtn = document.getElementById('mute-btn');
+    const progressBar = document.querySelector('.progress-bar');
+    const timeDisplay = document.querySelector('.time');
 
-// Format time (seconds to MM:SS)
-function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-}
+    // Format time (seconds to MM:SS)
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
 
-// Update progress bar
-function updateProgress() {
-    const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-    progressBar.style.setProperty('--progress', `${percent}%`);
-    timeDisplay.textContent = formatTime(audioPlayer.currentTime);
-}
+    // Update progress bar
+    function updateProgress() {
+        const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.style.setProperty('--progress', `${percent}%`);
+        timeDisplay.textContent = formatTime(audioPlayer.currentTime);
+    }
 
-// Play/pause toggle
-playBtn.addEventListener('click', () => {
-    if (audioPlayer.paused) {
-        audioPlayer.play();
-        playBtn.classList.add('playing');
-        playBtn.innerHTML = '<i class="play-icon">❚❚</i>';
-    } else {
-        audioPlayer.pause();
+    // Play/pause toggle
+    playBtn.addEventListener('click', () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playBtn.classList.add('playing');
+            playBtn.innerHTML = '<i class="play-icon">❚❚</i>';
+        } else {
+            audioPlayer.pause();
+            playBtn.classList.remove('playing');
+            playBtn.innerHTML = '<i class="play-icon">▶</i>';
+        }
+    });
+
+    // Mute toggle
+    muteBtn.addEventListener('click', () => {
+        audioPlayer.muted = !audioPlayer.muted;
+        muteBtn.innerHTML = audioPlayer.muted ?
+            '<i class="volume-icon">🔇</i>' :
+            '<i class="volume-icon">🔊</i>';
+    });
+
+    // Update progress as audio plays
+    audioPlayer.addEventListener('timeupdate', updateProgress);
+
+    // Reset when audio ends
+    audioPlayer.addEventListener('ended', () => {
         playBtn.classList.remove('playing');
         playBtn.innerHTML = '<i class="play-icon">▶</i>';
-    }
-});
+        progressBar.style.setProperty('--progress', '0%');
+        timeDisplay.textContent = '0:00';
+    });
 
-// Mute toggle
-muteBtn.addEventListener('click', () => {
-    audioPlayer.muted = !audioPlayer.muted;
-    muteBtn.innerHTML = audioPlayer.muted ? 
-        '<i class="volume-icon">🔇</i>' : 
-        '<i class="volume-icon">🔊</i>';
-});
+    // In your feature click handler:
+    map.on('click', 'locations', (e) => {
+        const props = e.features[0].properties;
 
-// Update progress as audio plays
-audioPlayer.addEventListener('timeupdate', updateProgress);
+        // ... existing code to show panel ...
 
-// Reset when audio ends
-audioPlayer.addEventListener('ended', () => {
-    playBtn.classList.remove('playing');
-    playBtn.innerHTML = '<i class="play-icon">▶</i>';
-    progressBar.style.setProperty('--progress', '0%');
-    timeDisplay.textContent = '0:00';
-});
+        // Set audio source if available
+        if (props.Audio) {
+            audioPlayer.src = props.Audio;
+            document.querySelector('.audio-player-container h4').textContent =
+                props.audioTitle || 'Audio Analysis';
 
-// In your feature click handler:
-map.on('click', 'locations', (e) => {
-    const props = e.features[0].properties;
-    
-    // ... existing code to show panel ...
-    
-    // Set audio source if available
-    if (props.voice) {
-        audioPlayer.src = props.voice;
-        document.querySelector('.audio-player-container h4').textContent = 
-            props.audioTitle || 'Audio Analysis';
-        
-        // Load metadata to get duration
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            timeDisplay.textContent = formatTime(audioPlayer.duration);
-        });
-    } else {
-        document.querySelector('.audio-player-container').style.display = 'none';
-    }
-});
+            // Load metadata to get duration
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                timeDisplay.textContent = formatTime(audioPlayer.duration);
+            });
+        } else {
+            document.querySelector('.audio-player-container').style.display = 'none';
+        }
+    });
 
     map.on('load', async () => {
         try {
@@ -276,13 +276,13 @@ map.on('click', 'locations', (e) => {
             map.on('click', 'locations', (e) => {
                 const props = e.features[0].properties;
                 const coordinates = e.features[0].geometry.coordinates.slice();
-                
+
                 // Store current feature view
                 currentFeatureView = {
                     center: coordinates,
                     zoom: 16
                 };
-                
+
                 // Move map to the left and zoom in
                 mapContainer.style.marginRight = '400px';
                 map.flyTo({
@@ -308,7 +308,7 @@ map.on('click', 'locations', (e) => {
                         ` : `<p><a href="${url}" target="_blank">View Video</a></p>`;
                     }).join('');
                 }
-                
+
                 panelContent.innerHTML = `
                     <h3>${props.Location}</h3>
                     <p><strong>Moment:</strong> ${props.Moment}</p>
@@ -318,18 +318,18 @@ map.on('click', 'locations', (e) => {
                         <p>${props.Analysis}</p>
                     </div>
                 `;
-                
+
                 sidePanel.classList.add('active');
             });
 
             // Return to original view when clicking map background
             map.on('click', (e) => {
                 if (!sidePanel.classList.contains('active')) return;
-                
+
                 const features = map.queryRenderedFeatures(e.point, {
                     layers: ['locations']
                 });
-                
+
                 if (features.length === 0) {
                     closePanel();
                 }
@@ -349,7 +349,7 @@ map.on('click', 'locations', (e) => {
             // Filter and zoom handler
             document.getElementById("boundaryfieldset").addEventListener('change', (e) => {
                 const selectedValue = document.getElementById('boundary').value;
-                
+
                 // Apply filters and adjust view
                 if (selectedValue === 'All') {
                     map.setFilter('locations', ['has', 'Topic']);
@@ -357,7 +357,7 @@ map.on('click', 'locations', (e) => {
                     map.flyTo(newMexicoView);
                     originalView.center = newMexicoView.center;
                     originalView.zoom = newMexicoView.zoom;
-                } 
+                }
                 else if (selectedValue === 'Subverting') {
                     map.setFilter('locations', ['==', ['get', 'Topic'], 'Subverting']);
                     map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Subverting']);
@@ -373,6 +373,59 @@ map.on('click', 'locations', (e) => {
                     originalView.zoom = albuquerqueView.zoom;
                 }
             });
+
+            // Function to find a feature by its Location name
+function findFeatureByLocation(locationName) {
+    const features = map.querySourceFeatures('breaking-bad');
+    return features.find(f => f.properties.Location === locationName);
+}
+
+// Handle clicks on geo-links in the side panel
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('geo-link')) {
+        e.preventDefault();
+        const targetLocation = e.target.getAttribute('data-feature-id');
+        const targetFeature = findFeatureByLocation(targetLocation);
+
+        if (targetFeature) {
+            // Pan to the target feature
+            map.flyTo({
+                center: targetFeature.geometry.coordinates,
+                zoom: 16,
+                speed: 1.2,
+                essential: true
+            });
+
+            // Update the side panel (reuse your existing panel logic)
+            const props = targetFeature.properties;
+            let videoEmbed = '';
+            if (props.Video) {
+                const videoId = getYouTubeId(props.Video);
+                videoEmbed = videoId ? `
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                frameborder="0" 
+                                allowfullscreen></iframe>
+                    </div>
+                ` : `<p><a href="${props.Video}" target="_blank">View Video</a></p>`;
+            }
+
+            panelContent.innerHTML = `
+                <h3>${props.Location}</h3>
+                <p><strong>Moment:</strong> ${props.Moment}</p>
+                ${videoEmbed}
+                <div class="analysis-section">
+                    <h4>Analysis</h4>
+                    <p>${props.Analysis}</p>
+                </div>
+            `;
+
+            // Ensure the panel stays open
+            sidePanel.classList.add('active');
+            mapContainer.style.marginRight = '400px';
+        }
+    }
+});
 
         } catch (error) {
             console.error('Error loading map data:', error);
