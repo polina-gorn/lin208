@@ -211,24 +211,50 @@ document.addEventListener('DOMContentLoaded', function () {
             map.setFilter('location-labels', ['has', 'Topic']);
 
             // Click handler for locations
+            // Add this helper function BEFORE your map.on('load') handler:
+            function offsetCoordinate(coords, distanceMeters, bearingDegrees) {
+                const earthRadius = 6378137; // Earth's radius in meters
+                const lat = coords[1];
+                const lng = coords[0];
+                const bearing = bearingDegrees * (Math.PI / 180); // Convert to radians
+
+                // Calculate new longitude (east/west offset)
+                const newLng = lng + (distanceMeters / earthRadius) * Math.cos(bearing) / Math.cos(lat * (Math.PI / 180));
+
+                // Calculate new latitude (north/south offset)
+                const newLat = lat + (distanceMeters / earthRadius) * Math.sin(bearing);
+
+                return [newLng, newLat];
+            }
+
+            // Then modify your click handler to use this function:
             map.on('click', 'locations', (e) => {
                 const props = e.features[0].properties;
-                const coordinates = e.features[0].geometry.coordinates.slice();
-                currentFeatureView = { center: coordinates, zoom: 16 };
-                
+                const originalCoords = e.features[0].geometry.coordinates.slice();
+
+                // Calculate new coordinates (50m east of original point)
+                const offsetMeters = 50; // Adjust this value as needed
+                const offsetCoords = offsetCoordinate(originalCoords, offsetMeters, 90); // 90° = east
+
                 // Move map and open panel
                 mapContainer.style.marginRight = '400px';
                 map.flyTo({
-                    center: coordinates,
+                    center: offsetCoords, // Use offset coordinates instead
                     zoom: 16,
                     speed: 1.2,
                     curve: 1,
                     essential: true
                 });
 
+                // Store both original and offset views
+                currentFeatureView = {
+                    originalCenter: originalCoords,
+                    offsetCenter: offsetCoords,
+                    zoom: 16
+                };
+
                 updateSidePanel(e.features[0]);
             });
-
             // Return to original view when clicking map background
             map.on('click', (e) => {
                 if (!sidePanel.classList.contains('active')) return;
@@ -275,15 +301,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Function to handle in-text links between locations
             function setupGeoLinks() {
-                document.body.addEventListener('click', function(e) {
+                document.body.addEventListener('click', function (e) {
                     if (e.target.classList.contains('geo-link')) {
                         e.preventDefault();
                         const targetLocation = e.target.getAttribute('data-feature-id');
-                        
+
                         const features = map.querySourceFeatures('breaking-bad', {
                             filter: ['==', ['get', 'Location'], targetLocation]
                         });
-                        
+
                         if (features.length > 0) {
                             const targetFeature = features[0];
                             map.flyTo({
@@ -304,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const coordinates = feature.geometry.coordinates.slice();
                 currentFeatureView = { center: coordinates, zoom: 16 };
                 document.getElementById('map').style.marginRight = '400px';
-                
+
                 let videoEmbed = '';
                 if (props.Video) {
                     const videoUrls = props.Video.split(';').map(url => url.trim());
@@ -331,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
 
                 sidePanel.classList.add('active');
-                
+
                 // Handle audio if available
                 if (props.Audio) {
                     audioPlayer.src = props.Audio;
