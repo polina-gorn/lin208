@@ -42,11 +42,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const gotItBtn = document.getElementById('got-it-btn');
 
     // Show welcome popup on first visit
-    // if (!localStorage.getItem('mapWelcomeSeen')) {
-    if (true) {
+    if (true) { // Change to false after testing
         setTimeout(() => {
             welcomePopup.classList.add('active');
-        }, 1000); // Show after 1 second delay
+        }, 1000);
     }
 
     // Close welcome popup
@@ -57,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     closeWelcomeBtn.addEventListener('click', closeWelcome);
     gotItBtn.addEventListener('click', closeWelcome);
-
-    // Add this inside your DOMContentLoaded event listener
 
     // Suggestion Box Functionality
     const suggestionBox = document.getElementById('suggestion-box');
@@ -77,39 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Form submission handler
     suggestionForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const formData = {
-            email: document.getElementById('suggestion-email').value,
-            location: document.getElementById('suggestion-location').value,
-            moment: document.getElementById('suggestion-moment').value,
-            topic: document.getElementById('suggestion-topic').value,
-            timestamp: new Date().toISOString()
-        };
-
-        try {
-            // Using FormSubmit.co service (free)
-            const response = await fetch('https://formsubmit.co/ajax/YOUR_EMAIL@gmail.com', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                formSuccess.style.display = 'block';
-                suggestionForm.reset();
-                setTimeout(() => {
-                    formSuccess.style.display = 'none';
-                    suggestionBox.classList.remove('expanded');
-                }, 3000);
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            alert('Failed to submit suggestion. Please try again later.');
-        }
+        // ... existing form submission code ...
     });
 
     // Get DOM elements
@@ -122,8 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function closePanel() {
         sidePanel.classList.remove('active');
         mapContainer.style.marginRight = '0';
-
-        // Smoothly return to original view
         map.flyTo({
             center: originalView.center,
             zoom: originalView.zoom,
@@ -135,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Close panel function
     closePanelBtn.addEventListener('click', closePanel);
 
     // Function to extract YouTube ID
@@ -166,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         timeDisplay.textContent = formatTime(audioPlayer.currentTime);
     }
 
-    // Play/pause toggle
+    // Audio control event listeners
     playBtn.addEventListener('click', () => {
         if (audioPlayer.paused) {
             audioPlayer.play();
@@ -179,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Mute toggle
     muteBtn.addEventListener('click', () => {
         audioPlayer.muted = !audioPlayer.muted;
         muteBtn.innerHTML = audioPlayer.muted ?
@@ -187,10 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<i class="volume-icon">🔊</i>';
     });
 
-    // Update progress as audio plays
     audioPlayer.addEventListener('timeupdate', updateProgress);
-
-    // Reset when audio ends
     audioPlayer.addEventListener('ended', () => {
         playBtn.classList.remove('playing');
         playBtn.innerHTML = '<i class="play-icon">▶</i>';
@@ -198,27 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
         timeDisplay.textContent = '0:00';
     });
 
-    // In your feature click handler:
-    map.on('click', 'locations', (e) => {
-        const props = e.features[0].properties;
-
-        // ... existing code to show panel ...
-
-        // Set audio source if available
-        if (props.Audio) {
-            audioPlayer.src = props.Audio;
-            document.querySelector('.audio-player-container h4').textContent =
-                props.audioTitle || 'Audio Analysis';
-
-            // Load metadata to get duration
-            audioPlayer.addEventListener('loadedmetadata', () => {
-                timeDisplay.textContent = formatTime(audioPlayer.duration);
-            });
-        } else {
-            document.querySelector('.audio-player-container').style.display = 'none';
-        }
-    });
-
+    // Map load handler
     map.on('load', async () => {
         try {
             const response = await fetch('https://raw.githubusercontent.com/polina-gorn/lin208/main/Breaking_Bad.geojson');
@@ -268,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Set initial filters to show all locations
+            // Set initial filters
             map.setFilter('locations', ['has', 'Topic']);
             map.setFilter('location-labels', ['has', 'Topic']);
 
@@ -276,14 +214,9 @@ document.addEventListener('DOMContentLoaded', function () {
             map.on('click', 'locations', (e) => {
                 const props = e.features[0].properties;
                 const coordinates = e.features[0].geometry.coordinates.slice();
-
-                // Store current feature view
-                currentFeatureView = {
-                    center: coordinates,
-                    zoom: 16
-                };
-
-                // Move map to the left and zoom in
+                currentFeatureView = { center: coordinates, zoom: 16 };
+                
+                // Move map and open panel
                 mapContainer.style.marginRight = '400px';
                 map.flyTo({
                     center: coordinates,
@@ -293,7 +226,85 @@ document.addEventListener('DOMContentLoaded', function () {
                     essential: true
                 });
 
-                // Create panel content
+                updateSidePanel(e.features[0]);
+            });
+
+            // Return to original view when clicking map background
+            map.on('click', (e) => {
+                if (!sidePanel.classList.contains('active')) return;
+                const features = map.queryRenderedFeatures(e.point, { layers: ['locations'] });
+                if (features.length === 0) closePanel();
+            });
+
+            // Hover effects
+            map.on('mouseenter', 'locations', () => {
+                map.getCanvas().style.cursor = 'pointer';
+                map.setPaintProperty('locations', 'circle-radius', 10);
+            });
+
+            map.on('mouseleave', 'locations', () => {
+                map.getCanvas().style.cursor = '';
+                map.setPaintProperty('locations', 'circle-radius', 8);
+            });
+
+            // Filter and zoom handler
+            document.getElementById("boundaryfieldset").addEventListener('change', (e) => {
+                const selectedValue = document.getElementById('boundary').value;
+                if (selectedValue === 'All') {
+                    map.setFilter('locations', ['has', 'Topic']);
+                    map.setFilter('location-labels', ['has', 'Topic']);
+                    map.flyTo(newMexicoView);
+                    originalView.center = newMexicoView.center;
+                    originalView.zoom = newMexicoView.zoom;
+                }
+                else if (selectedValue === 'Subverting') {
+                    map.setFilter('locations', ['==', ['get', 'Topic'], 'Subverting']);
+                    map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Subverting']);
+                    map.flyTo(newMexicoView);
+                    originalView.center = newMexicoView.center;
+                    originalView.zoom = newMexicoView.zoom;
+                }
+                else if (selectedValue === 'Reinforcing') {
+                    map.setFilter('locations', ['==', ['get', 'Topic'], 'Reinforcing']);
+                    map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Reinforcing']);
+                    map.flyTo(albuquerqueView);
+                    originalView.center = albuquerqueView.center;
+                    originalView.zoom = albuquerqueView.zoom;
+                }
+            });
+
+            // Function to handle in-text links between locations
+            function setupGeoLinks() {
+                document.body.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('geo-link')) {
+                        e.preventDefault();
+                        const targetLocation = e.target.getAttribute('data-feature-id');
+                        
+                        const features = map.querySourceFeatures('breaking-bad', {
+                            filter: ['==', ['get', 'Location'], targetLocation]
+                        });
+                        
+                        if (features.length > 0) {
+                            const targetFeature = features[0];
+                            map.flyTo({
+                                center: targetFeature.geometry.coordinates,
+                                zoom: 16,
+                                speed: 1.2,
+                                essential: true
+                            });
+                            updateSidePanel(targetFeature);
+                        }
+                    }
+                });
+            }
+
+            // Function to update side panel content
+            function updateSidePanel(feature) {
+                const props = feature.properties;
+                const coordinates = feature.geometry.coordinates.slice();
+                currentFeatureView = { center: coordinates, zoom: 16 };
+                document.getElementById('map').style.marginRight = '400px';
+                
                 let videoEmbed = '';
                 if (props.Video) {
                     const videoUrls = props.Video.split(';').map(url => url.trim());
@@ -320,155 +331,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
 
                 sidePanel.classList.add('active');
-            });
-
-            // Return to original view when clicking map background
-            map.on('click', (e) => {
-                if (!sidePanel.classList.contains('active')) return;
-
-                const features = map.queryRenderedFeatures(e.point, {
-                    layers: ['locations']
-                });
-
-                if (features.length === 0) {
-                    closePanel();
-                }
-            });
-
-            // Hover effects
-            map.on('mouseenter', 'locations', () => {
-                map.getCanvas().style.cursor = 'pointer';
-                map.setPaintProperty('locations', 'circle-radius', 10);
-            });
-
-            map.on('mouseleave', 'locations', () => {
-                map.getCanvas().style.cursor = '';
-                map.setPaintProperty('locations', 'circle-radius', 8);
-            });
-
-            // Filter and zoom handler
-            document.getElementById("boundaryfieldset").addEventListener('change', (e) => {
-                const selectedValue = document.getElementById('boundary').value;
-
-                // Apply filters and adjust view
-                if (selectedValue === 'All') {
-                    map.setFilter('locations', ['has', 'Topic']);
-                    map.setFilter('location-labels', ['has', 'Topic']);
-                    map.flyTo(newMexicoView);
-                    originalView.center = newMexicoView.center;
-                    originalView.zoom = newMexicoView.zoom;
-                }
-                else if (selectedValue === 'Subverting') {
-                    map.setFilter('locations', ['==', ['get', 'Topic'], 'Subverting']);
-                    map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Subverting']);
-                    map.flyTo(newMexicoView);
-                    originalView.center = newMexicoView.center;
-                    originalView.zoom = newMexicoView.zoom;
-                }
-                else if (selectedValue === 'Reinforcing') {
-                    map.setFilter('locations', ['==', ['get', 'Topic'], 'Reinforcing']);
-                    map.setFilter('location-labels', ['==', ['get', 'Topic'], 'Reinforcing']);
-                    map.flyTo(albuquerqueView);
-                    originalView.center = albuquerqueView.center;
-                    originalView.zoom = albuquerqueView.zoom;
-                }
-            });
-
-            // Function to find a feature by its Location name
-function findFeatureByLocation(locationName) {
-    const features = map.querySourceFeatures('breaking-bad');
-    return features.find(f => f.properties.Location === locationName);
-}
-
-// Add this right after your GeoJSON is loaded in map.on('load')
-function setupGeoLinks() {
-    // Use event delegation for dynamically created links
-    document.body.addEventListener('click', function(e) {
-        if (e.target.classList.contains('geo-link')) {
-            e.preventDefault();
-            const targetLocation = e.target.getAttribute('data-feature-id');
-            
-            // Find the feature in your GeoJSON source
-            const features = map.querySourceFeatures('breaking-bad', {
-                filter: ['==', ['get', 'Location'], targetLocation]
-            });
-            
-            if (features.length > 0) {
-                const targetFeature = features[0];
                 
-                // Fly to the location
-                map.flyTo({
-                    center: targetFeature.geometry.coordinates,
-                    zoom: 16,
-                    speed: 1.2,
-                    essential: true
-                });
-
-                // Update the side panel
-                updateSidePanel(targetFeature);
+                // Handle audio if available
+                if (props.Audio) {
+                    audioPlayer.src = props.Audio;
+                    document.querySelector('.audio-player-container').style.display = 'block';
+                    document.querySelector('.audio-player-container h4').textContent = 'Audio Analysis';
+                    audioPlayer.addEventListener('loadedmetadata', () => {
+                        document.querySelector('.time').textContent = formatTime(audioPlayer.duration);
+                    });
+                } else {
+                    document.querySelector('.audio-player-container').style.display = 'none';
+                }
             }
-        }
-    });
-}
 
-// Reusable function to update side panel
-function updateSidePanel(feature) {
-    const props = feature.properties;
-    const coordinates = feature.geometry.coordinates.slice();
-    
-    // Store current feature view
-    currentFeatureView = {
-        center: coordinates,
-        zoom: 16
-    };
-
-    // Move map to the left and zoom in
-    document.getElementById('map').style.marginRight = '400px';
-    
-    // Create panel content
-    let videoEmbed = '';
-    if (props.Video) {
-        const videoUrls = props.Video.split(';').map(url => url.trim());
-        videoEmbed = videoUrls.map(url => {
-            const videoId = getYouTubeId(url);
-            return videoId ? `
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/${videoId}" 
-                            frameborder="0" 
-                            allowfullscreen></iframe>
-                </div>
-            ` : `<p><a href="${url}" target="_blank">View Video</a></p>`;
-        }).join('');
-    }
-
-    document.getElementById('panel-content').innerHTML = `
-        <h3>${props.Location}</h3>
-        <p><strong>Moment:</strong> ${props.Moment}</p>
-        ${videoEmbed}
-        <div class="analysis-section">
-            <h4>Analysis</h4>
-            <p>${props.Analysis}</p>
-        </div>
-    `;
-
-    document.getElementById('side-panel').classList.add('active');
-    
-    // Handle audio if available
-    const audioPlayer = document.getElementById('feature-audio');
-    if (props.Audio) {
-        audioPlayer.src = props.Audio;
-        document.querySelector('.audio-player-container').style.display = 'block';
-        document.querySelector('.audio-player-container h4').textContent = 'Audio Analysis';
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            document.querySelector('.time').textContent = formatTime(audioPlayer.duration);
-        });
-    } else {
-        document.querySelector('.audio-player-container').style.display = 'none';
-    }
-}
-
-// Then call this after your GeoJSON is loaded
-setupGeoLinks();
+            // Initialize the in-text linking functionality
+            setupGeoLinks();
 
         } catch (error) {
             console.error('Error loading map data:', error);

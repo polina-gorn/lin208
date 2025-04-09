@@ -204,7 +204,7 @@ form {
     border-radius: 8px;
     width: 90%;
     max-width: 550px;
-    max-height: 90vh;
+    max-height: 100vh;
     overflow-y: auto;
     position: relative;
 }
