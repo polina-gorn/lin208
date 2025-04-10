@@ -82,11 +82,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const panelContent = document.getElementById('panel-content');
     const closePanelBtn = document.getElementById('close-panel');
     const mapContainer = document.getElementById('map');
+    const mapVideoContainer = document.querySelector('.map-video-container');
+    const mapVideo = document.getElementById('map-video');
 
     // Close panel and return to original view
     function closePanel() {
         sidePanel.classList.remove('active');
         mapContainer.style.marginRight = '0';
+        mapVideoContainer.style.display = 'none';
         map.flyTo({
             center: originalView.center,
             zoom: originalView.zoom,
@@ -211,7 +214,6 @@ document.addEventListener('DOMContentLoaded', function () {
             map.setFilter('location-labels', ['has', 'Topic']);
 
             // Click handler for locations
-            // Add this helper function BEFORE your map.on('load') handler:
             function offsetCoordinate(coords, distanceMeters, bearingDegrees) {
                 const earthRadius = 6378137; // Earth's radius in meters
                 const lat = coords[1];
@@ -227,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return [newLng, newLat];
             }
 
-            // Then modify your click handler to use this function:
             map.on('click', 'locations', (e) => {
                 const props = e.features[0].properties;
                 const originalCoords = e.features[0].geometry.coordinates.slice();
@@ -255,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 updateSidePanel(e.features[0]);
             });
+
             // Return to original view when clicking map background
             map.on('click', (e) => {
                 if (!sidePanel.classList.contains('active')) return;
@@ -331,25 +333,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 currentFeatureView = { center: coordinates, zoom: 16 };
                 document.getElementById('map').style.marginRight = '400px';
 
-                let videoEmbed = '';
+                // Handle video display
                 if (props.Video) {
                     const videoUrls = props.Video.split(';').map(url => url.trim());
-                    videoEmbed = videoUrls.map(url => {
-                        const videoId = getYouTubeId(url);
-                        return videoId ? `
-                            <div class="video-container">
-                                <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                        frameborder="0" 
-                                        allowfullscreen></iframe>
-                            </div>
-                        ` : `<p><a href="${url}" target="_blank">View Video</a></p>`;
-                    }).join('');
+                    const firstVideoUrl = videoUrls[0];
+                    const videoId = getYouTubeId(firstVideoUrl);
+                    
+                    if (videoId) {
+                        mapVideo.innerHTML = `
+                            <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        `;
+                        mapVideoContainer.style.display = 'block';
+                    } else {
+                        mapVideo.innerHTML = `<p><a href="${firstVideoUrl}" target="_blank">View Video</a></p>`;
+                        mapVideoContainer.style.display = 'block';
+                    }
+                } else {
+                    mapVideoContainer.style.display = 'none';
                 }
 
+                // Update panel content with text only
                 panelContent.innerHTML = `
                     <h3>${props.Location}</h3>
                     <p><strong>Moment:</strong> ${props.Moment}</p>
-                    ${videoEmbed}
                     <div class="analysis-section">
                         <h4>Analysis</h4>
                         <p>${props.Analysis}</p>
