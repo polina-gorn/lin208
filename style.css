@@ -40,8 +40,8 @@ body {
 .side-panel {
     position: fixed;
     top: 0;
-    right: -700px;
-    width: 700px;
+    right: -550px;
+    width: 550px;
     height: 100vh;
     background: white;
     box-shadow: -2px 0 15px rgba(0,0,0,0.1);
@@ -115,15 +115,26 @@ body {
 /* Analysis Section */
 .analysis-section {
     margin-top: 25px;
-    padding: 15px;
-    background: #f8f8f8;
+    /* padding: 15px; */
+    /* background: #f8f8f8; */
     border-radius: 5px;
-    border-left: 4px solid #e41a1c;
+    /* border-left: 4px solid #e41a1c; */
 }
 
-.analysis-section h4 {
+/* .analysis-section h4 {
     margin-top: 0;
     color: #333;
+} */
+
+/* Add this to your CSS file */
+.quote {
+    font-style: italic;
+    color: #555;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-left: 3px solid #7b3294;
+    background-color: #f8f8f8;
+    line-height: 1.5;
 }
 
 
