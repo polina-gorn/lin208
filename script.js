@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 mapContainer.style.marginRight = '400px';
                 map.flyTo({
                     center: offsetCoords, // Use offset coordinates instead
-                    zoom: 16,
+                    zoom: 17,
                     speed: 1.2,
                     curve: 1,
                     essential: true
