@@ -40,6 +40,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const welcomePopup = document.getElementById('welcome-popup');
     const closeWelcomeBtn = document.getElementById('close-welcome');
     const gotItBtn = document.getElementById('got-it-btn');
+    const muteWelcomeBtn = document.getElementById('mute-welcome-btn');
+let isWelcomeMuted = false;
+
+muteWelcomeBtn.addEventListener('click', () => {
+    isWelcomeMuted = !isWelcomeMuted;
+    welcomeAudio.muted = isWelcomeMuted;
+    muteWelcomeBtn.textContent = isWelcomeMuted ? "🔊" : "🔇";
+    muteWelcomeBtn.title = isWelcomeMuted ? "Unmute" : "Mute";
+});
 
     // Show welcome popup on first visit
     if (true) { // Change to false after testing
@@ -357,10 +366,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Update panel content with text only
                 panelContent.innerHTML = `
-                    <h3>${props.Location}</h3>
-                    <p><strong>Moment:</strong> ${props.Moment}</p>
-                    <div class="analysis-section">
-                        <h4>Analysis</h4>
+                <div class="analysis-section">
+                    <h4>${props.Location}</h4>
+                  <i><p><strong>Moment:</strong> ${props.Moment}</p></i>
                         <p>${props.Analysis}</p>
                     </div>
                 `;
