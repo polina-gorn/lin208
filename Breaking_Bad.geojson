@@ -43,7 +43,7 @@
             "type": "Feature",
             "properties": {
                 "Topic": "Reinforcing",
-                "Character": "Skyler White, Jesse Pinkman",
+                "Character": "Walter White, Krazy8",
                 "Location": "Jesse's House",
                 "Moment": "Season 1, Episode X. Krazy 8 & Walter White dialogue",
                 "Video": "https://www.youtube.com/watch?v=IWrpnFueivQ&ab_channel=BreakingBad%26BetterCallSaul",
@@ -51,8 +51,8 @@
             },
             "geometry": {
                 "coordinates": [
-                    -106.6656191220582,
-                    35.0875511526882
+                    -106.6657,
+                    35.087552
                 ],
                 "type": "Point"
             },
