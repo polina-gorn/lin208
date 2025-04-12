@@ -37,35 +37,75 @@ document.addEventListener('DOMContentLoaded', function () {
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
     map.addControl(new mapboxgl.ScaleControl({ unit: 'metric' }));
 
+    // Get audio element (ADD THIS)
+    const welcomeAudio = document.getElementById('welcome-audio');
+    welcomeAudio.volume = 0.3; // Set volume to 30%
+
     const welcomePopup = document.getElementById('welcome-popup');
     const closeWelcomeBtn = document.getElementById('close-welcome');
     const gotItBtn = document.getElementById('got-it-btn');
     const muteWelcomeBtn = document.getElementById('mute-welcome-btn');
-let isWelcomeMuted = false;
+    let isWelcomeMuted = false;
 
-muteWelcomeBtn.addEventListener('click', () => {
-    isWelcomeMuted = !isWelcomeMuted;
-    welcomeAudio.muted = isWelcomeMuted;
-    muteWelcomeBtn.textContent = isWelcomeMuted ? "🔊" : "🔇";
-    muteWelcomeBtn.title = isWelcomeMuted ? "Unmute" : "Mute";
-});
+    muteWelcomeBtn.addEventListener('click', () => {
+        isWelcomeMuted = !isWelcomeMuted;
+        welcomeAudio.muted = isWelcomeMuted;
+        muteWelcomeBtn.textContent = isWelcomeMuted ? "🔊" : "🔇";
+        muteWelcomeBtn.title = isWelcomeMuted ? "Unmute" : "Mute";
+    });
 
-    // Show welcome popup on first visit
+    // Show welcome popup on first visit - MODIFY THIS BLOCK
     if (true) { // Change to false after testing
         setTimeout(() => {
             welcomePopup.classList.add('active');
+
+            // Try to autoplay (ADD THIS)
+            const playPromise = welcomeAudio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Autoplay was prevented - show play button
+                    showAudioFallback();
+                });
+            }
         }, 1000);
     }
 
-    // Close welcome popup
+    // Add this new function (ADD THIS)
+    function showAudioFallback() {
+        const playBtn = document.createElement('button');
+        playBtn.innerHTML = '▶ PLAY THEME MUSIC';
+        playBtn.style.cssText = `
+              position: absolute;
+              top: 10px;
+              right: 80px;
+              background: #7b3294;
+              color: white;
+              border: none;
+              padding: 5px 10px;
+              border-radius: 5px;
+              cursor: pointer;
+              z-index: 1001;
+          `;
+        playBtn.onclick = () => {
+            welcomeAudio.play();
+            playBtn.remove();
+        };
+        welcomePopup.querySelector('.popup-content').appendChild(playBtn);
+    }
+
+    // Close welcome popup - MODIFY THIS FUNCTION
     function closeWelcome() {
         welcomePopup.classList.remove('active');
+        welcomeAudio.pause(); // ADD THIS
+        welcomeAudio.currentTime = 0; // ADD THIS (rewind to start)
         localStorage.setItem('mapWelcomeSeen', 'true');
     }
 
     closeWelcomeBtn.addEventListener('click', closeWelcome);
     gotItBtn.addEventListener('click', closeWelcome);
 
+    // Suggestion Box Functionality (rest of your existing code continues...)
     // Suggestion Box Functionality
     const suggestionBox = document.getElementById('suggestion-box');
     const suggestionToggle = document.getElementById('suggestion-toggle');
@@ -347,7 +387,7 @@ muteWelcomeBtn.addEventListener('click', () => {
                     const videoUrls = props.Video.split(';').map(url => url.trim());
                     const firstVideoUrl = videoUrls[0];
                     const videoId = getYouTubeId(firstVideoUrl);
-                    
+
                     if (videoId) {
                         mapVideo.innerHTML = `
                             <iframe src="https://www.youtube.com/embed/${videoId}" 
