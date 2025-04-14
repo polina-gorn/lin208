@@ -133,15 +133,15 @@
             "properties": {
                 "Topic": "Reinforcing",
                 "Character": "Andrea",
-                "Location": "Andrea's First House",
-                "Moment": "Season 3, Episode 11: Andrea and Her Non-accented English",
-                "Video": "https://www.youtube.com/watch?v=-IJ-2pSDpds&ab_channel=BreakingBad%26BetterCallSaul",
+                "Location": "Andrea's New House",
+                "Moment": "Season 5, Episode 13: Andrea and Her Non-accented English",
+                "Video": "https://www.youtube.com/watch?v=3elLkY3JGB8&t=69s&ab_channel=BreakingBad%26BetterCallSaul",
                 "Analysis": "<div style='font-family:Arial,sans-serif;max-width:500px;line-height:1.5;white-space:pre-line;'>Andrea is a character of Hispanic origin and Jesse’s love interest in the second half of the show. Despite living in a Hispanic neighbourhood and, allegedly, using Spanish in her household, she does not have a noticeably non-standard English accent. In this scene, in her interactions with her relatives, she does not seem to code switch, even when her nana addresses her in Spanish. The same applies to her child Brock, who is depicted as a monolingual English-speaking child, despite his ethnic background.<br><br>There are very few instances which point out Andrea’s Hispanic background. Omitting her ethnicity through the plot and her accent brings her closer to the White protagonists of the show, as opposed to the characters with stronger Spanish-accented English, who also happen to be Walter White’s antagonists (see <a href='#' class='geo-link' data-feature-id='Jesse’s Basement'>‘Jesse’s Basement’</a> for one of the examples).<br><br>The authors of the show create a positive-negative binary, where a non-standard English accent prompts the audience to associate those characters with Walter White’s enemies. Therefore, Breaking Bad perpetuates a stereotype where a non-English accent is associated with negative assumptions about a person, while an English accent is perceived as neutral or positive.</div>"
             },
             "geometry": {
                 "coordinates": [
-                    -106.65472426244146,
-                    35.07391707447513
+                    -106.566001731487,
+                     35.09388109746917
                 ],
                 "type": "Point"
             }
