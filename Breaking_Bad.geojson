@@ -170,16 +170,16 @@
             "type": "Feature",
             "properties": {
                 "Topic": "Reinforcing",
-                "Character": "Huell",
-                "Location": "Saul's firm",
-                "Moment": "Huell as a comedic character",
-                "Video": "https://www.youtube.com/watch?v=lgRQxWnk_I8&pp=ygUSaHVlbGwgYnJlYWtpbmcgYmFk ; https://www.youtube.com/watch?v=7HrmD_vIMIk&pp=ygUSaHVlbGwgYnJlYWtpbmcgYmFk; https://www.youtube.com/watch?v=jcoMtliFiwA&ab_channel=HilaryTsai",
-                "Analysis": "<div style='font-family:Arial,sans-serif;max-width:500px;line-height:1.5;white-space:pre-line;'>Huell Babineaux is one of the employees of the criminal lawyer Saul Goodman and one of the few Black characters in the show. Even though he did not get a lot of screentime, his scenes gained popularity due to their comedic effect. Despite being one of the most loved characters of the show, Huell represents a stereotypical Black character in popular media because the authors make him the centre of the joke due to his awkwardness, silliness and cluelessness.<br><br><div style='background:#f8f9fa;padding:10px;border-left:3px solid #3498db;margin:10px 0;'>The authors do not give depth to this character and introduce him to meet the comedic needs of the show and reduce the suspense and tension of the episode.</div></div>"
+                "Character": "Gus",
+                "Location": "Somewhere in the desert",
+                "Moment": "Gus's accent and his function in the show",
+                "Video": "https://www.youtube.com/watch?v=cqem3h-RRaw&ab_channel=BreakingBad%26BetterCallSaul",
+                "Analysis": "<div style='font-family:Arial,sans-serif;max-width:500px;line-height:1.5;white-space:pre-line;'>Gus Fring is a Chilean-American drug kingpin whose business prospers in the US under the guise of a chicken shop branch “Los Pollos Hermanos”. Gus Fring is an ambivalent character of the series. At first, he appears as powerful but benevolent, willing to hire Walter White as his private meth cook for three months and pay him 1 million dollars. However, as the show goes on, there arises a rivalry between Gus and Walter, with Gus eventually becoming Walt’s biggest enemy. This dynamic can be tracked through Gus’s English, which becomes more Spanish-accented when he presents himself as a danger to Walter White.<br> In the first scene of the video, where Gus is being interrogated by the police, we can notice that his English sounds very standard. In contrast to this, the following scene, where Gus meets Walt in the desert after Walt has incited the murder of several drug dealers, Gus’s pronounciation sounds more Spanish: <span class='quote'> “Medical condition” – light l instead of dark l <br> “Worthless junkie” – junkie vowel substitution /ʌ/ → /a/ or /o/ </span> He also tends to roll his Rs more when he is speaking from a position of danger – compare “he was a warm gentle person” from the first scene to “who couldn’t keep the peace for eight hours” from the second scene.<br> This correlation between his non-standard accented English and the context of the scene plays into a stereotypical representation of accents in media. According to this stereotype, villains tend to have non-standard English accents, while protagonists usually speak standard English. Considering the fact that the actor of the show speaks standard American English and he played many roles depicting various varieties/accents of English (African-American, Spanish, Italian), this detail may have been introduced either by the authors of the show or by the actor himself. Even a slight detail, this speech shift can subconsciously reinforce people’s negative associations with foreign-accented English (for similar cases, see Jesse’s Basement & Andrea’s New House).</div>"
             },
             "geometry": {
                 "coordinates": [
-                    -106.53178100756864,
-                    35.12942850229493
+                    -106.53137308767138,
+                    35.219492797182724
                 ],
                 "type": "Point"
             }
