@@ -104,7 +104,7 @@
 </div>
 
 <!-- Suggestion Box -->
-<div id="suggestion-box" class="suggestion-box">
+<div id="suggestion-box" class="suggestion-box" action="https://formspree.io/f/polinagorn11@gmail.com" method="POST">
     <button id="suggestion-toggle" class="suggestion-toggle">
         <span></span> Have an idea?
     </button>
@@ -123,15 +123,8 @@
                 <label for="suggestion-moment"> Event Description:</label>
                 <textarea id="suggestion-moment" required placeholder="Describe the scene and how it reinforces or subverts stereotypes through language use"></textarea>
             </div>
-            <!-- <div class="form-group">
-                <label for="suggestion-topic">Does it reinforce or subvert stereotypes?</label>
-                <select id="suggestion-topic" required>
-                    <option value="">Select...</option>
-                    <option value="Reinforcing">Reinforcing</option>
-                    <option value="Subverting">Subverting</option>
-                </select>
-            </div> -->
             <button type="submit" class="submit-btn">Send Suggestion</button>
+            <input type="hidden" name="_next" value="https://polina-gorn.github.io/lin208/thanks.html">
         </form>
     </div>
 </div>
