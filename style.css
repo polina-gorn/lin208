@@ -365,8 +365,9 @@ form {
 
 /* Audio Player Styles */
 .audio-player-container {
-    margin-top: 20px;
-    padding-top: 20px;
+    margin-top: 10px;
+    padding-top: 10px;
+    margin-bottom: 10px;
     border-top: 1px solid #eee;
 }
 
