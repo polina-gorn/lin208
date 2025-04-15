@@ -116,24 +116,6 @@
             "type": "Feature",
             "properties": {
                 "Topic": "Reinforcing",
-                "Character": "Gus",
-                "Location": "Gus' Chicken Farm",
-                "Moment": "Season 3, Episode 3: Gus's Bad Spanish",
-                "Video": "https://www.youtube.com/watch?v=9kteWT_hVRE&ab_channel=RexStalliones",
-                "Analysis": "fvsfsvfsvateh"
-            },
-            "geometry": {
-                "coordinates": [
-                    -106.66860376125229,
-                    34.95419140930039
-                ],
-                "type": "Point"
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "Topic": "Reinforcing",
                 "Character": "Andrea",
                 "Location": "Andrea's New House",
                 "Moment": "Season 5, Episode 13: Andrea and Her Non-accented English",
